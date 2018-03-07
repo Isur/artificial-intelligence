@@ -2,6 +2,8 @@ from sklearn import preprocessing
 from sklearn import metrics
 import numpy as np
 import matplotlib.pyplot as plt
+import math
+import random
 file = open("iris.data")
 # 01
 data = []
@@ -16,9 +18,14 @@ def printAttr(sample,y):
     print("Attributes of sample ", y, " : ")
     for i in sample[y-1]:
         print(i)
-
+    
 printAttr(data, 10)
 printAttr(data, 75)
+eukllidesDistance = 0
+for i in range(0,4):
+    eukllidesDistance += (float(data[9][i])-float(data[74][i]))**2
+eukllidesDistance = math.sqrt(eukllidesDistance)
+print("Euklides distance = ",eukllidesDistance)
 # 03
 def analyze(attr):
     print("Minimmum: ", np.amin(attr,axis=0))
@@ -85,8 +92,10 @@ for i in data:
         for x in range(0,4):
             sum_versicolor[x] += float(i[x])
 for i in range(0,4):
-    print("Average of setosa attribute    : ",i+1," = ", sum_setosa[i]/counter_setosa )
-    print("Average of versicolor attribute: ",i+1," = ", sum_versicolor[i]/counter_versicolor )
+    avg = sum_setosa[i]/counter_setosa
+    print("Average of setosa attribute    : ",i+1," = ", avg )
+    avg = sum_versicolor[i]/counter_versicolor 
+    print("Average of versicolor attribute: ",i+1," = ", avg )
 # 07
 n_attr_one = []
 n_attr_two = []
@@ -102,32 +111,70 @@ for i in range(0,4):
     for x in attr[i]:
         n_attr[i].append((x-np.average(attr[i],axis=0))/np.std(attr[i],axis=0))
 for i in range(0,4):
-    print("Minimum for attribute             ", i+1, ": ", np.amin(n_attr[i],axis=0))
-    print("Maximum for attribute             ", i+1, ": ", np.amax(n_attr[i],axis=0))
-    print("Average for attribute             ", i+1, ": ", np.average(n_attr[i],axis=0))
-    print("Standard deviation for attribute: ", i+1, ": ", np.std(n_attr[i],axis=0))
+    print("Minimum ", i+1, ": ", np.amin(n_attr[i],axis=0))
+    print("Maximum ", i+1, ": ", np.amax(n_attr[i],axis=0))
+    print("Average ", i+1, ": ", np.average(n_attr[i],axis=0))
+    print("STD     ", i+1, ": ", np.std(n_attr[i],axis=0))
 # 08
 howMany = 10
 x1 = np.random.randn(howMany) - 2
 x2 = 11*np.random.rand(howMany)
-data = np.vstack((x1,x2))
-data = data.conj().transpose()
-plt.scatter(data[:,0], data[:,1])
+data_rand = np.vstack((x1,x2))
+data_rand = data_rand.conj().transpose()
+plt.scatter(data_rand[:,0], data_rand[:,1])
 plt.show()
 
 # 09
-euklides_Matrix = metrics.pairwise.pairwise_distances(data, metric='euclidean')
-print("Euklides Matrix: \n", euklides_Matrix)
-mahalanobis_Matrix = metrics.pairwise.pairwise_distances(data, metric='mahalanobis')
-print("Mahalanobis Matrix: \n", mahalanobis_Matrix)
-minkowski_Matrix = metrics.pairwise.pairwise_distances(data, metric='minkowski')
-print("Minkowski Matrix: \n", minkowski_Matrix)
+euk = metrics.pairwise.pairwise_distances(data_rand, metric='euclidean')
+print("Euklides Matrix: \n", euk)
+mah = metrics.pairwise.pairwise_distances(data_rand, metric='mahalanobis')
+print("Mahalanobis Matrix: \n", mah)
+mink = metrics.pairwise.pairwise_distances(data_rand, metric='minkowski')
+print("Minkowski Matrix: \n", mink)
 
 # 10
 scale = preprocessing.MinMaxScaler((0,1))
-euklides_Matrix_scale = metrics.pairwise.pairwise_distances(data, metric='euclidean')
-print("Euklides Matrix scale: \n", euklides_Matrix_scale)
-mahalanobis_Matrix_scale = metrics.pairwise.pairwise_distances(data, metric='mahalanobis')
-print("Mahalanobis Matrix scale: \n", mahalanobis_Matrix_scale)
-minkowski_Matrix_scale = metrics.pairwise.pairwise_distances(data, metric='minkowski')
-print("Minkowski Matrix scale: \n", minkowski_Matrix_scale)
+data_scale = scale.fit_transform(data_rand)
+euk= metrics.pairwise.pairwise_distances(data_scale, metric='euclidean')
+print("Euklides Matrix scale: \n", euk)
+mah = metrics.pairwise.pairwise_distances(data_scale, metric='mahalanobis')
+print("Mahalanobis Matrix scale: \n", mah)
+mink = metrics.pairwise.pairwise_distances(data_scale, metric='minkowski')
+print("Minkowski Matrix scale: \n", mink)
+
+# 11
+def d1(x):
+    return -x[0]+x[1]
+def d2(x):
+    return x[0]-x[1]
+def classify(x):
+    if(d1(x)>d2(x)):
+        return True
+    else:
+        return False
+#  Wzór powierzchni decyzyjnej :
+#  x1 = x2
+# 12
+
+howMany = 10
+example_data = []
+for i in range(0,howMany):
+    example_data.append([random.uniform(-5,0),random.uniform(0,5)])
+    example_data.append([random.uniform(0,5),random.uniform(-5,0)])
+class_one_x = []
+class_one_y = []
+class_two_x = []
+class_two_y = []
+for i in example_data:
+    if classify(i):
+        class_one_x.append(i[0])
+        class_one_y.append(i[1])
+    else:
+        class_two_x.append(i[0])
+        class_two_y.append(i[1])
+
+plt.scatter(class_one_x, class_one_y, c="GREEN")
+plt.scatter(class_two_x, class_two_y, c="BLUE")
+plt.plot([-5,5],[0,0])
+plt.plot([0,0],[-5,5])
+plt.show()
