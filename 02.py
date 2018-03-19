@@ -1,13 +1,13 @@
+import math
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.io as sio
+import random
 from sklearn import preprocessing
 from sklearn import metrics
 from sklearn.naive_bayes import GaussianNB
 from sklearn import datasets
-import math
-import numpy as np
-import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
-import scipy.io as sio
-import random
 from sklearn.cross_validation import train_test_split
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn import neighbors, datasets
@@ -16,13 +16,13 @@ from sklearn import neighbors, datasets
 banana_data = sio.loadmat('banana.mat')['test_data']
 banana_labels = sio.loadmat('banana.mat')['test_labels']
 
-train, test, train_targets, test_targets = train_test_split(banana_data, banana_labels,
-                                 test_size=0.30, random_state=42)
-counter = 0
+train, test, train_targets, test_targets = train_test_split(
+    banana_data, banana_labels, test_size=0.30, random_state=42)
+
 
 # Zadanie 2:
 gnb = GaussianNB()
-predicted =gnb.fit(train, np.ravel(train_targets)).predict(test)
+predicted = gnb.fit(train, np.ravel(train_targets)).predict(test)
 
 # Zadanie 3:
 x = []
@@ -38,7 +38,19 @@ for i in range(len(x)):
         plt.scatter(x[i],y[i],c="RED")
     else:
         plt.scatter(x[i],y[i],c="GREEN")
+        
+        
+c = 1.0
+h = .02
+x_min, x_max = test[:,0].min()-1,test[:,0].max()+1
+y_min, y_max = test[:,1].min()-1,test[:,1].max()+1
 
+xx,yy = np.meshgrid(np.arange(x_min, x_max,h), np.arange(y_min,y_max,h))
+
+Z = gnb.predict(np.c_[xx.ravel(),yy.ravel()])
+Z=Z.reshape(xx.shape)
+
+plt.contour(xx,yy,Z,cmap=plt.cm.Paired)
 
 plt.show()
 # Zadanie 4:
@@ -116,4 +128,4 @@ for i in range(len(x)):
 plt.show()
 
 # Zadanie 11:
-print("Bad classify: ", int(len(x)*(1-sc)))
+print("Bad classify: ", math.ceil(len(x)*(1-sc)))
