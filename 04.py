@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_olivetti_faces
 from sklearn.cluster import MiniBatchKMeans
 from sklearn import decomposition
+#from mlxtend.feature_selection import SequntialFeatureSelector as SFS
+from sklearn.neighbors import KNeighborsClassifier
 
 
 # Zadanie 1:
@@ -60,3 +62,6 @@ for name, estimator, center in estimators:
         plot_gallery('%s - Train time %.1fs'  %(name,train_time), components_[:n_components])
     plt.show()
 
+# Zadanie 5:
+#knn = KNeighborsClassifier(n_Neighbors=4)
+#sfs1 = SFS(knn, k_features=3,forward=True, floating=False, verbose=2,scoring='accuracy', cv=0)
