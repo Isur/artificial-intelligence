@@ -127,7 +127,8 @@ train, test, train_targets, test_targets = train_test_split(data_train, labels_t
 
 
 # Zadanie 7:
-k = round((5/100)*len(train))
+
+k = round((5/100)*len(train[0]))
 n = round(math.sqrt(len(train)))
 
 
@@ -152,8 +153,7 @@ pipe = make_pipeline(StandardScaler(),sffs)
 pipe.fit(train,train_targets)
 print('\n best combination (ACC: %.3f): %s\n' % (sffs.k_score_, sffs.k_feature_idx_))
 
-print("\n SFFS score: ")
-print(sffs.k_score_)
+
 # Zadanie 10:
 
 sbs = SFS(knn_arcene, k_features=k, forward=False, floating=False, verbose=2,scoring='accuracy', cv=0)
